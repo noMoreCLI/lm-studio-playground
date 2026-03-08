@@ -15,6 +15,7 @@ A simple Flask web app to explore and test a local LLM served by [LM Studio](htt
   - **`providers/lm_studio.py`** — `LMStudioProvider`: OpenAI client with `base_url` for LM Studio’s local API.
 - **`config.json`** — Persisted app and connection settings (created with defaults if missing).
 - **`templates/`** — Flask HTML templates (e.g. `chat.html`, `settings.html`).
+- **`tests/`** — Pytest tests (config, use cases, providers, routes) for a TDD workflow.
 
 ## Prerequisites
 
@@ -41,6 +42,17 @@ python run.py
 ```
 
 Then open [http://127.0.0.1:5000](http://127.0.0.1:5000) in your browser.
+
+## Tests (TDD)
+
+Tests are written to describe expected behaviour first; run them before and after code changes:
+
+```bash
+pip install -r requirements.txt   # includes pytest, pytest-cov
+pytest
+```
+
+Use `pytest -v` for verbose output and `pytest --cov=app` for coverage. Config tests use an isolated temp file (see `tests/conftest.py`), so `config.json` is not modified.
 
 - **Chat** (`/`): Send messages to your local model, see conversation history, token usage, and raw request/response. Uses the **active connection** from Settings.
 - **Settings** (`/settings`): Manage **connections** (add, delete, set active, edit). For each connection: base URL, model, API key, system prompt, temperature, max tokens. Also app-level options (e.g. secret key, webserver port). Values are saved to `config.json`.

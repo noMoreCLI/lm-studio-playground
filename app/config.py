@@ -100,7 +100,10 @@ def load():
     try:
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
+        was_flat = "connections" not in data or not isinstance(data.get("connections"), list)
         data = _migrate_flat_to_connections(data)
+        if was_flat:
+            save(data)  # Persist migrated format so active_connection_id is on disk
         # Ensure app-level defaults
         for k, v in APP_DEFAULTS.items():
             if k not in data:
@@ -155,6 +158,8 @@ def get_active_connection():
     """
     Get the currently active connection dict (defaults merged).
     Falls back to the first connection if no active_connection_id or if it is invalid.
+    When falling back, persists the effective active connection to config so the
+    app always connects to the last (or fallback) active provider.
     """
     data = load()
     conns = data.get("connections") or []
@@ -166,6 +171,9 @@ def get_active_connection():
                 out.update(c)
                 return out
     if conns:
+        # Persist fallback so config file reflects the effective active connection
+        data["active_connection_id"] = conns[0]["id"]
+        save(data)
         out = CONNECTION_DEFAULTS.copy()
         out.update(conns[0])
         return out
