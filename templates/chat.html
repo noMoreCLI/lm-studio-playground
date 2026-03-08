@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Chat – LM Studio Web{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div class="d-flex align-items-center gap-2">
+    <h1 class="h3 mb-0 fw-bold text-dark">Chat</h1>
+    <button type="button" id="new-chat-btn" class="btn btn-outline-primary btn-sm" title="Start a new conversation">
+      <i class="bi bi-plus-square me-1"></i>New chat
+    </button>
+  </div>
+  <div id="connection-status" class="status badge px-3 py-2" role="status">Checking…</div>
+</div>
+
+<div class="card shadow-sm border-0 mb-3">
+  <div class="card-body">
+    <section id="history" class="history" aria-label="Conversation history"></section>
+  </div>
+</div>
+
+<section id="token-usage" class="token-usage small text-muted mb-3" aria-label="Token usage"></section>
+
+<div class="card shadow-sm border-0 mb-3">
+  <div class="card-header bg-white py-2">
+    <h2 class="h6 mb-0 fw-semibold">Raw request / response</h2>
+  </div>
+  <div class="card-body p-0">
+    <div class="accordion accordion-flush" id="rawDebugAccordion">
+      <div class="accordion-item border-0">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#rawRequest" aria-expanded="false" aria-controls="rawRequest">Last request</button>
+        </h3>
+        <div id="rawRequest" class="accordion-collapse collapse" data-bs-parent="#rawDebugAccordion">
+          <div class="accordion-body p-0">
+            <pre id="raw-request" class="mb-0 p-3 small bg-dark text-light rounded-0" style="max-height: 200px; overflow: auto;"></pre>
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item border-0">
+        <h3 class="accordion-header">
+          <button class="accordion-button collapsed bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#rawResponse" aria-expanded="false" aria-controls="rawResponse">Last response</button>
+        </h3>
+        <div id="rawResponse" class="accordion-collapse collapse" data-bs-parent="#rawDebugAccordion">
+          <div class="accordion-body p-0">
+            <pre id="raw-response" class="mb-0 p-3 small bg-dark text-light rounded-0" style="max-height: 200px; overflow: auto;"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="input-area card shadow-sm border-0">
+  <div class="card-body">
+    <div class="mb-2">
+      <textarea id="user-input" class="form-control" rows="3" placeholder="Type a message…"></textarea>
+    </div>
+    <button type="button" id="send-btn" class="btn btn-primary">
+      <i class="bi bi-send me-1"></i>Send
+    </button>
+  </div>
+</section>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}

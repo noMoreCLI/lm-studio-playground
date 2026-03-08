@@ -1,0 +1,64 @@
+/* Overrides and enhancements on top of Bootstrap */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+/* Connection status badge (chat page) */
+#connection-status.status {
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+#connection-status.status.connected {
+  background-color: var(--bs-success) !important;
+  color: #fff;
+}
+
+#connection-status.status.disconnected {
+  background-color: var(--bs-danger) !important;
+  color: #fff;
+}
+
+/* Chat history */
+.history {
+  min-height: 120px;
+}
+
+.history .message {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.history .message:last-child {
+  border-bottom: none;
+}
+
+.history .message.user {
+  color: var(--bs-primary);
+}
+
+.history .message.assistant {
+  color: var(--bs-success);
+}
+
+.history .empty {
+  color: var(--bs-secondary);
+  font-style: italic;
+}
+
+.token-usage {
+  font-size: 0.875rem;
+}
+
+/* Chat input area */
+.input-area .form-control:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}

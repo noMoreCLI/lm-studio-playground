@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Settings – LM Studio Web{% endblock %}
+{% block content %}
+<h1 class="h3 mb-4 fw-bold text-dark">Settings</h1>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+      {{ messages[0] }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-header bg-white py-3">
+    <h2 class="h5 mb-0 fw-semibold">Connections</h2>
+  </div>
+  <div class="card-body">
+    <p class="text-muted small mb-3">Each connection stores its own server URL, model, API key, and generation settings.</p>
+    <ul class="list-group list-group-flush mb-3">
+      {% for c in connections %}
+      <li class="list-group-item d-flex flex-wrap align-items-center gap-2 py-3 px-0 border-0">
+        <strong>{{ c.name or 'Unnamed' }}</strong>
+        {% if active_connection and c.id == active_connection.id %}
+          <span class="badge bg-success">active</span>
+        {% endif %}
+        <div class="d-flex gap-1 ms-auto flex-wrap">
+          <form method="post" action="{{ url_for('settings.index') }}" class="d-inline">
+            <input type="hidden" name="action" value="set_active">
+            <input type="hidden" name="connection_id" value="{{ c.id }}">
+            <button type="submit" class="btn btn-sm btn-outline-primary">Set active</button>
+          </form>
+          <a href="{{ url_for('settings.index', edit=c.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+    <form method="post" action="{{ url_for('settings.index') }}">
+      <input type="hidden" name="action" value="add_connection">
+      <button type="submit" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i>Add connection</button>
+    </form>
+  </div>
+</div>
+
+{% if edit_connection %}
+<div class="card shadow-sm border-0 mb-4">
+  <div class="card-header bg-white py-3">
+    <h2 class="h5 mb-0 fw-semibold">Edit connection: {{ edit_connection.name or 'Unnamed' }}</h2>
+  </div>
+  <div class="card-body">
+    <form method="post" action="{{ url_for('settings.index') }}" class="mb-4">
+      <input type="hidden" name="action" value="save_connection">
+      <input type="hidden" name="connection_id" value="{{ edit_connection.id }}">
+      <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input type="text" name="name" class="form-control" value="{{ edit_connection.name }}" placeholder="e.g. LM Studio (local)">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Base URL (server)</label>
+        <input type="url" name="base_url" class="form-control" value="{{ edit_connection.base_url }}" placeholder="http://localhost:1234/v1">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Model</label>
+        <input type="text" name="model" class="form-control" value="{{ edit_connection.model }}" placeholder="Model ID from server">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">API key</label>
+        <input type="text" name="api_key" class="form-control" value="{{ edit_connection.api_key }}" placeholder="lm-studio for local; set for remote APIs" autocomplete="off">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">System prompt</label>
+        <textarea name="system_prompt" class="form-control" rows="4">{{ edit_connection.system_prompt }}</textarea>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-6">
+          <label class="form-label">Temperature (0–2)</label>
+          <input type="number" name="temperature" class="form-control" value="{{ edit_connection.temperature }}" min="0" max="2" step="0.1">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Max tokens</label>
+          <input type="number" name="max_tokens" class="form-control" value="{{ edit_connection.max_tokens }}" min="1">
+        </div>
+      </div>
+      <div class="mt-3 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">Save connection</button>
+        <a href="{{ url_for('settings.index') }}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+    <form method="post" action="{{ url_for('settings.index') }}" onsubmit="return confirm('Remove this connection?');">
+      <input type="hidden" name="action" value="delete_connection">
+      <input type="hidden" name="connection_id" value="{{ edit_connection.id }}">
+      <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i>Delete connection</button>
+    </form>
+  </div>
+</div>
+{% endif %}
+
+<div class="card shadow-sm border-0">
+  <div class="card-header bg-white py-3">
+    <h2 class="h5 mb-0 fw-semibold">App settings</h2>
+  </div>
+  <div class="card-body">
+    <form method="post" action="{{ url_for('settings.index') }}">
+      <input type="hidden" name="action" value="save_app">
+      <div class="mb-3">
+        <label class="form-label">Secret key (session/flash; leave blank to keep current)</label>
+        <input type="password" name="secret_key" class="form-control" value="" placeholder="Leave blank to keep current" autocomplete="off">
+      </div>
+      <button type="submit" class="btn btn-primary">Save app settings</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
